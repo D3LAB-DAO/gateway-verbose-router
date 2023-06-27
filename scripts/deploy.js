@@ -1,28 +1,13 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
+const {
+  ethers
+} = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const verboseRouter = await ethers.deployContract("VerboseRouter", []);
 
-  const lockedAmount = hre.ethers.parseEther("0.001");
+  await verboseRouter.waitForDeployment();
 
-  const lock = await hre.ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  await lock.waitForDeployment();
-
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  console.log("verboseRouter address: ", await verboseRouter.getAddress());
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -31,3 +16,4 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+// verboseRouter address:  0x17760E8C32BC6AB8907fBE5568D88D67E7386EDb
